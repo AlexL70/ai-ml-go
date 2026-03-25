@@ -84,6 +84,11 @@ func (dfs *DepthFirstSearch) Solve() {
 		dfs.Game.NumExplored++
 		dfs.Game.Explored = append(dfs.Game.Explored, currentNode.State)
 
+		// Build animation frame if appropriate
+		if dfs.Game.Animate {
+			dfs.Game.OutputImage(fmt.Sprintf("./tmp/%06d.png", dfs.Game.NumExplored))
+		}
+
 		if currentNode.State == dfs.Game.Goal {
 			var actions []string
 			var cells []Point

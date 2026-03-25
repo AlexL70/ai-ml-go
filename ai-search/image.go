@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/StephaneBunel/bresenham"
+	"github.com/kmicki/apng"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
@@ -112,4 +113,47 @@ func (g *Maze) printLocation(p Point, c color.Color, patch *image.RGBA) {
 		Dot:  point,
 	}
 	d.DrawString(fmt.Sprintf("[%d %d]", p.Row, p.Col))
+}
+
+func (g *Maze) OutputAnimatedImage() {
+	output := "./animation.png"
+	files, err := os.ReadDir("./tmp")
+	if err != nil {
+		panic(fmt.Errorf("error opening animation sources: %w", err))
+	}
+	var images []string
+	var delays []int
+	for _, file := range files {
+		images = append(images, fmt.Sprintf("./tmp/%s", file.Name()))
+		delays = append(delays, 30)
+	}
+	images = append(images, "./image.png")
+	a := apng.APNG{
+		Frames: make([]apng.Frame, len(images)),
+	}
+	out, err := os.Create(output)
+	if err != nil {
+		panic(fmt.Errorf("error creating animation file: %w", err))
+	}
+	defer out.Close()
+
+	for i, s := range images {
+		in, err := os.Open(s)
+		if err != nil {
+			panic(fmt.Errorf("error reading images: %w", err))
+		}
+		defer in.Close()
+
+		m, err := png.Decode(in)
+		if err != nil {
+			// it is continue in the original code in case if arbitrary file appear
+			panic(fmt.Errorf("error decoding image: %w", err))
+		}
+		a.Frames[i].Image = m
+	}
+
+	err = apng.Encode(out, a)
+	if err != nil {
+		panic(fmt.Errorf("error encoding images: %w", err))
+	}
 }

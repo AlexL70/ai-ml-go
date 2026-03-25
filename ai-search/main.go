@@ -54,6 +54,15 @@ type Maze struct {
 	NumExplored int
 	Debug       bool
 	SearchType  int
+	Animate     bool
+}
+
+func init() {
+	err := os.MkdirAll("./tmp", os.ModePerm)
+	if err != nil {
+		panic(fmt.Errorf("error creating temp directory: %w", err))
+	}
+	emptyTmp()
 }
 
 func main() {
@@ -61,6 +70,8 @@ func main() {
 	var maze, searchType string
 	flag.StringVar(&maze, "file", "data/maze.txt", "maze file (default is data/maze.txt)")
 	flag.StringVar(&searchType, "search", "dfs", "search type")
+	flag.BoolVar(&m.Debug, "debug", false, "turns on debug mode (more output)")
+	flag.BoolVar(&m.Animate, "animate", false, "turns on animation mode")
 	flag.Parse()
 
 	err := m.Load(maze)
@@ -89,6 +100,12 @@ func main() {
 		fmt.Println("No solution found!")
 	}
 	fmt.Println("Explored:", len(m.Explored), "nodes.")
+
+	if m.Animate {
+		fmt.Println("Building animation...")
+		m.OutputAnimatedImage()
+		fmt.Println("Done!")
+	}
 }
 
 func solveDFS(m *Maze) {
