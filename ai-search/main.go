@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 )
 
 const (
@@ -68,7 +69,55 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Maze height/width:", m.Height, m.Width)
+	startTime := time.Now()
+	switch searchType {
+	case "dfs":
+		m.SearchType = DFS
+		solveDFS(&m)
+	default:
+		fmt.Printf("Invalid search type: %s\n", searchType)
+		os.Exit(1)
+	}
+
+	if len(m.Solution.Actions) > 0 { // maze solved
+		fmt.Println("Solved!")
+		m.PrintMaze()
+		fmt.Println("Solution is ", len(m.Solution.Actions), "steps.")
+		fmt.Println("Time to solve:", time.Since(startTime))
+	} else {
+		fmt.Println("No solution found!")
+	}
+	fmt.Println("Explored:", len(m.Explored), "nodes.")
+}
+
+func solveDFS(m *Maze) {
+	var s DepthFirstSearch
+	s.Game = m
+	fmt.Println("Goal is:", m.Goal)
+	s.Solve()
+}
+
+func (g *Maze) PrintMaze() {
+	for r, row := range g.Walls {
+		for c, col := range row {
+			if col.Wall {
+				fmt.Printf("█")
+			} else if g.Start.Row == col.State.Row && g.Start.Col == col.State.Col {
+				fmt.Printf("S")
+			} else if g.Goal.Row == col.State.Row && g.Goal.Col == col.State.Col {
+				fmt.Printf("G")
+			} else if g.InSolution(Point{Row: r, Col: c}) {
+				fmt.Printf("٭")
+			} else {
+				fmt.Printf(" ")
+			}
+		}
+		fmt.Println("")
+	}
+}
+
+func (g *Maze) InSolution(p Point) bool {
+	return inExplored(p, g.Solution.Cells)
 }
 
 func (g *Maze) Load(fileName string) error {

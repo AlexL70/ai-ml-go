@@ -99,7 +99,6 @@ func (dfs *DepthFirstSearch) Solve() {
 			slices.Reverse(actions)
 			slices.Reverse(cells)
 			dfs.Game.Solution = Solution{Actions: actions, Cells: cells}
-			fmt.Print("Solved!")
 			return
 		}
 
@@ -132,9 +131,12 @@ func (dfs *DepthFirstSearch) Neighbors(node *Node) []*Node {
 		}
 	}
 	// randomize neighbors before returning
-	for i := range neighbors {
-		j := rand.Intn(len(neighbors) - 1)
-		neighbors[i], neighbors[j] = neighbors[j], neighbors[i]
+	if len(neighbors) > 1 {
+		for i := range neighbors {
+			j := rand.Intn(len(neighbors) - 1)
+			neighbors[i], neighbors[j] = neighbors[j], neighbors[i]
+		}
 	}
+
 	return neighbors
 }
