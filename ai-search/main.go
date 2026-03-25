@@ -81,9 +81,10 @@ func main() {
 
 	if len(m.Solution.Actions) > 0 { // maze solved
 		fmt.Println("Solved!")
-		m.PrintMaze()
+		// m.PrintMaze()
 		fmt.Println("Solution is ", len(m.Solution.Actions), "steps.")
 		fmt.Println("Time to solve:", time.Since(startTime))
+		m.OutputImage()
 	} else {
 		fmt.Println("No solution found!")
 	}
