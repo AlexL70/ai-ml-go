@@ -28,12 +28,31 @@ type Wall struct {
 	Wall  bool
 }
 
+type Node struct {
+	index  int
+	State  Point
+	Parent *Node
+	Action string
+}
+
+type Solution struct {
+	Actions []string
+	Cells   []Point
+}
+
 type Maze struct {
-	Height int
-	Width  int
-	Start  Point
-	Goal   Point
-	Walls  [][]Wall
+	Height      int
+	Width       int
+	Start       Point
+	Goal        Point
+	Walls       [][]Wall
+	CurrentNode *Node
+	Solution    Solution
+	Explored    []Point
+	Steps       int
+	NumExplored int
+	Debug       bool
+	SearchType  int
 }
 
 func main() {
