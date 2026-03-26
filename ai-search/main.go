@@ -85,6 +85,9 @@ func main() {
 	case "dfs":
 		m.SearchType = DFS
 		solveDFS(&m)
+	case "bfs":
+		m.SearchType = BFS
+		solveBFS(&m)
 	default:
 		fmt.Printf("Invalid search type: %s\n", searchType)
 		os.Exit(1)
@@ -110,6 +113,13 @@ func main() {
 
 func solveDFS(m *Maze) {
 	var s DepthFirstSearch
+	s.Game = m
+	fmt.Println("Goal is:", m.Goal)
+	s.Solve()
+}
+
+func solveBFS(m *Maze) {
+	var s BreadthFirstSearch
 	s.Game = m
 	fmt.Println("Goal is:", m.Goal)
 	s.Solve()
