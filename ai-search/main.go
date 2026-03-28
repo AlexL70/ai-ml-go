@@ -30,10 +30,15 @@ type Wall struct {
 }
 
 type Node struct {
-	index  int
-	State  Point
-	Parent *Node
-	Action string
+	index      int
+	State      Point
+	Parent     *Node
+	Action     string
+	CostToGoal int
+}
+
+func (n *Node) ManhattanDistance(goal Point) int {
+	return abs(goal.Col-n.State.Col) + abs(goal.Row-n.State.Row)
 }
 
 type Solution struct {
@@ -88,6 +93,9 @@ func main() {
 	case "bfs":
 		m.SearchType = BFS
 		solveBFS(&m)
+	case "dijkstra":
+		m.SearchType = DIJKSTRA
+		solveDijkstra(&m)
 	default:
 		fmt.Printf("Invalid search type: %s\n", searchType)
 		os.Exit(1)
@@ -120,6 +128,13 @@ func solveDFS(m *Maze) {
 
 func solveBFS(m *Maze) {
 	var s BreadthFirstSearch
+	s.Game = m
+	fmt.Println("Goal is:", m.Goal)
+	s.Solve()
+}
+
+func solveDijkstra(m *Maze) {
+	var s DijkstraSearch
 	s.Game = m
 	fmt.Println("Goal is:", m.Goal)
 	s.Solve()

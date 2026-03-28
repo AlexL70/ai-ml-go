@@ -30,3 +30,11 @@ func emptyTmp() {
 		}
 	}
 }
+
+func abs(i int) int {
+	if i < 0 {
+		return -i
+	} else {
+		return i
+	}
+}
