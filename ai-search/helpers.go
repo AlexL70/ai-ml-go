@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 )
 
@@ -37,4 +38,10 @@ func abs(i int) int {
 	} else {
 		return i
 	}
+}
+
+func euclideanDistance(p1, p2 Point) float64 {
+	lenHorizontal := float64(abs(p1.Col - p2.Col))
+	lenVertical := float64(abs(p1.Row - p2.Row))
+	return math.Sqrt(lenHorizontal*lenHorizontal + lenVertical*lenVertical)
 }

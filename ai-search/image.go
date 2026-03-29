@@ -99,6 +99,8 @@ func (g *Maze) drawSquare(col Wall, p Point, img *image.RGBA, c color.Color, siz
 		switch g.SearchType {
 		case DIJKSTRA, GBFS:
 			g.printManhattanCost(p, color.Black, patch)
+		case ASTAR:
+			g.printEstimatedCost(p, color.Black, patch)
 		default:
 			// Do nothing
 		}
@@ -126,6 +128,20 @@ func (g *Maze) printManhattanCost(p Point, c color.Color, patch *image.RGBA) {
 	default:
 		// Do nothing
 	}
+}
+
+func (g *Maze) printEstimatedCost(p Point, c color.Color, patch *image.RGBA) {
+	point := fixed.Point26_6{X: fixed.I(6), Y: fixed.I(17)}
+	d := &font.Drawer{
+		Dst:  patch,
+		Src:  image.NewUniform(c),
+		Face: basicfont.Face7x13,
+		Dot:  point,
+	}
+	n := Node{State: p}
+	fromStart := float64(n.ManhattanDistance(g.Start))
+	toGoal := euclideanDistance(p, g.Goal)
+	d.DrawString(fmt.Sprintf("%.2f", fromStart+toGoal))
 }
 
 // printLocation

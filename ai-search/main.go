@@ -30,11 +30,12 @@ type Wall struct {
 }
 
 type Node struct {
-	index      int
-	State      Point
-	Parent     *Node
-	Action     string
-	CostToGoal int
+	index               int
+	State               Point
+	Parent              *Node
+	Action              string
+	CostToGoal          int
+	EstimatedCostToGoal float64
 }
 
 func (n *Node) ManhattanDistance(goal Point) int {
@@ -99,6 +100,9 @@ func main() {
 	case "gbfs":
 		m.SearchType = GBFS
 		solveGBFS(&m)
+	case "astar":
+		m.SearchType = ASTAR
+		solveAStar(&m)
 	default:
 		fmt.Printf("Invalid search type: %s\n", searchType)
 		os.Exit(1)
@@ -145,6 +149,13 @@ func solveDijkstra(m *Maze) {
 
 func solveGBFS(m *Maze) {
 	var s GreedyBestFirstSearch
+	s.Game = m
+	fmt.Println("Goal is:", m.Goal)
+	s.Solve()
+}
+
+func solveAStar(m *Maze) {
+	var s AStar
 	s.Game = m
 	fmt.Println("Goal is:", m.Goal)
 	s.Solve()
