@@ -12,6 +12,7 @@ import (
 	"github.com/kmicki/apng"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/font/inconsolata"
 	"golang.org/x/image/math/fixed"
 )
 
@@ -59,12 +60,15 @@ func (g *Maze) OutputImage(fileName ...string) {
 			} else if p.Col == g.Goal.Col && p.Row == g.Goal.Row {
 				// red for the goal
 				g.drawSquare(col, p, img, red, cellSize, j*cellSize, i*cellSize)
-			} else if col.State == g.CurrentNode.State {
+			} else if col.State.Col == g.CurrentNode.State.Col && col.State.Row == g.CurrentNode.State.Row {
 				// orange for the current location
 				g.drawSquare(col, p, img, orange, cellSize, j*cellSize, i*cellSize)
 			} else if inExplored(p, g.Explored) {
 				// Yellow for explored locations
 				g.drawSquare(col, p, img, yellow, cellSize, j*cellSize, i*cellSize)
+			} else if col.State.Water {
+				// blue for water
+				g.drawSquare(col, p, img, blue, cellSize, j*cellSize, i*cellSize)
 			} else {
 				// white for empty unexplored
 				g.drawSquare(col, p, img, color.White, cellSize, j*cellSize, i*cellSize)
@@ -73,7 +77,7 @@ func (g *Maze) OutputImage(fileName ...string) {
 	}
 
 	// Draw a grid
-	for i, _ := range g.Walls {
+	for i := range g.Walls {
 		bresenham.DrawLine(img, 0, i*cellSize, g.Width*cellSize, i*cellSize, gray)
 	}
 	for i := 0; i <= g.Width; i++ {
@@ -104,11 +108,27 @@ func (g *Maze) drawSquare(col Wall, p Point, img *image.RGBA, c color.Color, siz
 		default:
 			// Do nothing
 		}
+		// Check if the cell is flooded
+		if col.State.Water {
+			g.printWater(blue, patch)
+		}
+
 		g.printLocation(p, color.Black, patch)
 	}
 
 	draw.Draw(img, image.Rect(x, y, x+size, y+size), patch, image.Point{}, draw.Src)
+}
 
+func (g *Maze) printWater(c color.Color, patch *image.RGBA) {
+	point := fixed.Point26_6{X: fixed.I(50), Y: fixed.I(18)}
+	d := &font.Drawer{
+		Dst: patch,
+		Src: image.NewUniform(c),
+		// Make the font bold so the "W" is more visible on the blue background
+		Face: inconsolata.Bold8x16,
+		Dot:  point,
+	}
+	d.DrawString("W")
 }
 
 func (g *Maze) printManhattanCost(p Point, c color.Color, patch *image.RGBA) {

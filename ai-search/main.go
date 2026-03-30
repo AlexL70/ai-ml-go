@@ -20,8 +20,9 @@ const (
 )
 
 type Point struct {
-	Row int
-	Col int
+	Row   int
+	Col   int
+	Water bool
 }
 
 type Wall struct {
@@ -237,6 +238,9 @@ func (g *Maze) Load(fileName string) error {
 				wall.Wall = false
 			case " ":
 				wall.Wall = false
+			case "w":
+				wall.Wall = false
+				wall.State.Water = true
 			case "#":
 				wall.Wall = true
 			default:
