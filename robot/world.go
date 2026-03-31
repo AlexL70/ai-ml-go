@@ -86,7 +86,18 @@ func NewRoom(configFile string, animate bool) *Room {
 		grid[gridWidth-1][j] = Cell{Type: "wall", Obstacle: true, ObstacleName: "wall"}
 	}
 
-	// TODO: Add furniture
+	// Add furniture
+	for _, f := range roomConfig.Furniture {
+		x := f.X / cellSize
+		y := f.Y / cellSize
+		width := f.Width / cellSize
+		height := f.Height / cellSize
+		for i := y; i < y+height; i++ {
+			for j := x; j < x+width; j++ {
+				grid[i][j] = Cell{Type: "furniture", Obstacle: true, ObstacleName: f.Name}
+			}
+		}
+	}
 
 	// Count cleanable cells
 	cleanableCellCount := 0
@@ -127,8 +138,8 @@ func (r *Room) Display(robot *Robot, showPath bool) {
 	// Clear the console
 	// fmt.Print("\033[H\033[2J") // Works on Unix-based systems only
 	screen.Clear()
-	for i := range r.Width {
-		for j := range r.Height {
+	for i := range r.Height {
+		for j := range r.Width {
 			cell := r.Grid[i][j]
 			if robot.Position.X == i && robot.Position.Y == j {
 				fmt.Print(charRobot)

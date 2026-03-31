@@ -15,7 +15,6 @@ func main() {
 	flag.Parse()
 
 	room := NewRoom(configFile, animate)
-	fmt.Println(room.CleanableCellCount)
 
 	// Create robot
 	robot := NewRobot(1, 1)
