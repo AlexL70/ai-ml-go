@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/inancgumus/screen"
 )
 
 const (
@@ -119,4 +121,44 @@ func LoadRoomConfig(fileName string) (*RoomConfig, error) {
 		return nil, fmt.Errorf("failed to parse config file: %w", err)
 	}
 	return &config, nil
+}
+
+func (r *Room) Display(robot *Robot, showPath bool) {
+	// Clear the console
+	// fmt.Print("\033[H\033[2J") // Works on Unix-based systems only
+	screen.Clear()
+	for i := range r.Width {
+		for j := range r.Height {
+			cell := r.Grid[i][j]
+			if robot.Position.X == i && robot.Position.Y == j {
+				fmt.Print(charRobot)
+			} else if showPath && isInPath(Point{X: i, Y: j}, robot.Path) {
+				fmt.Print(charPath)
+			} else {
+				switch cell.Type {
+				case "wall":
+					fmt.Print(charWall)
+				case "furniture":
+					fmt.Print(charFurniture)
+				case "clean":
+					fmt.Print(charClean)
+				case "dirty":
+					fmt.Print(charDirty)
+				}
+			}
+		}
+		fmt.Println()
+	}
+	// Display stats
+	percentCleaned := float64(r.CleanedCellCount) / float64(r.CleanableCellCount) * 100
+	fmt.Printf("Cleaned %d cells out of %d which is (%.2f%%)\n", r.CleanedCellCount, r.CleanableCellCount, percentCleaned)
+}
+
+func isInPath(point Point, path []Point) bool {
+	for _, p := range path {
+		if p.X == point.X && p.Y == point.Y {
+			return true
+		}
+	}
+	return false
 }
