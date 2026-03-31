@@ -149,9 +149,9 @@ func (r *Room) Display(robot *Robot, showPath bool) {
 		}
 		fmt.Println()
 	}
-	// Display stats
-	percentCleaned := float64(r.CleanedCellCount) / float64(r.CleanableCellCount) * 100
-	fmt.Printf("Cleaned %d cells out of %d which is (%.2f%%)\n", r.CleanedCellCount, r.CleanableCellCount, percentCleaned)
+	// Display cleaning progress
+	progress := float64(r.CleanedCellCount) / float64(r.CleanableCellCount) * 100
+	fmt.Printf("Cleaning progress: %.2f%% (%d/%d cells)\n", progress, r.CleanedCellCount, r.CleanableCellCount)
 }
 
 func isInPath(point Point, path []Point) bool {
@@ -161,4 +161,25 @@ func isInPath(point Point, path []Point) bool {
 		}
 	}
 	return false
+}
+
+func displaySummary(room *Room, robot *Robot, moveCount int, cleaningTime time.Duration) {
+	// Display the final room state with the robot's path
+	fmt.Println("\nFinal room state with robot's path:")
+	room.Display(robot, true)
+	fmt.Println("\n======== Cleaning Summary ========")
+	fmt.Printf("Room size: %dx%d (%d cm x %d cm)\n", room.Width, room.Height, room.Width*cellSize, room.Height*cellSize)
+
+	// Calculate and display the percentage of the room cleaned
+	percentCleaned := float64(room.CleanedCellCount) / float64(room.CleanableCellCount) * 100
+	fmt.Printf("Cleaned %d cells out of %d which is (%.2f%%)\n", room.CleanedCellCount, room.CleanableCellCount, percentCleaned)
+	// Display time and moves taken
+	fmt.Printf("Total moves: %d\n", moveCount)
+	fmt.Printf("Total cleaning time: %s\n", cleaningTime)
+	// Calculate efficiency (cells cleaned per move)
+	if moveCount > 0 {
+		efficiency := float64(room.CleanedCellCount) / float64(moveCount)
+		fmt.Printf("Cleaning efficiency: %.2f cells per move\n", efficiency)
+	}
+	fmt.Println("==================================")
 }

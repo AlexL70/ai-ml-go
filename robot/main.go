@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 )
 
 func main() {
@@ -17,8 +18,17 @@ func main() {
 	fmt.Println(room.CleanableCellCount)
 
 	// Create robot
+	robot := NewRobot(1, 1)
 
 	// Assign cleaning algorithm
+	switch algorithm {
+	case "random":
+		robot.CleanRoom = CleanRoomRandomWalk
+	default:
+		fmt.Printf("Unknown algorithm: %s\n", algorithm)
+		os.Exit(1)
+	}
 
 	// Clean the room
+	robot.CleanRoom(room, robot)
 }
