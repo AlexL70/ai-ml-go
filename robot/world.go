@@ -141,9 +141,9 @@ func (r *Room) Display(robot *Robot, showPath bool) {
 	for i := range r.Height {
 		for j := range r.Width {
 			cell := r.Grid[j][i]
-			if robot.Position.X == i && robot.Position.Y == j {
+			if robot.Position.X == j && robot.Position.Y == i {
 				fmt.Print(charRobot)
-			} else if showPath && isInPath(Point{X: i, Y: j}, robot.Path) {
+			} else if showPath && isInPath(Point{X: j, Y: i}, robot.Path) {
 				fmt.Print(charPath)
 			} else {
 				switch cell.Type {
