@@ -92,8 +92,8 @@ func NewRoom(configFile string, animate bool) *Room {
 		y := f.Y / cellSize
 		width := f.Width / cellSize
 		height := f.Height / cellSize
-		for i := y; i < y+height; i++ {
-			for j := x; j < x+width; j++ {
+		for i := x; i < x+width; i++ {
+			for j := y; j < y+height; j++ {
 				grid[i][j] = Cell{Type: "furniture", Obstacle: true, ObstacleName: f.Name}
 			}
 		}
@@ -140,7 +140,7 @@ func (r *Room) Display(robot *Robot, showPath bool) {
 	screen.Clear()
 	for i := range r.Height {
 		for j := range r.Width {
-			cell := r.Grid[i][j]
+			cell := r.Grid[j][i]
 			if robot.Position.X == i && robot.Position.Y == j {
 				fmt.Print(charRobot)
 			} else if showPath && isInPath(Point{X: i, Y: j}, robot.Path) {
